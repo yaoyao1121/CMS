@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        #box{
+            width:600px;
+            margin:100px auto 0;
+        }
+        #veri{
+            width:150px;
+            height:40px;
+            border:1px solid red;
+            text-align: center;
+            text-space: 2px;
+            line-height: 40px;
+        }
+        #btn{
+            padding:5px 10px;
+            margin-top:10px;
+        }
+        #register{
+            width:600px;
+            margin:100px auto 0;
+        }
+        #register>div>input,#box>div>input{
+            width:400px;
+            padding:10px;
+        }
+        #register>div>p,#box>div>p{
+            padding:8px;
+            height:21px;
+            color:red;
+        }
+    </style>
+</head>
+<body>
+<!--注册-->
+<form action="http://127.0.0.1:3000/Handler/AdminLoginRegHandler?actions=add" method="POST" id="register">
+    <div id="username">
+        <input type="text" placeholder="昵称" name="username">
+        <p></p>
+    </div>
+    <div id="password">
+        <input type="text" placeholder="密码" name="password">
+        <p></p>
+    </div>
+    <div id="phone">
+        <input type="text" placeholder="手机号" name="phone">
+        <p></p>
+    </div>
+    <div id="truename">
+       <input type="text" placeholder="姓名" name="truename">
+       <p></p>
+    </div>
+    <input id="login" type="submit" value="立即注册" />
+</form>
+<!--登录-->
+<div id="box">
+    <div>
+        <input type="text" placeholder="昵称" name="username" id="USER">
+        <p id="userErr"></p>
+    </div>
+    <div >
+        <input type="text" placeholder="密码" name="password" id="PASS">
+        <p id="passErr"> </p>
+    </div>
+    <div>
+        <input type="text" placeholder="请输入验证码" style="width:100px;" id="veriN" value="">
+        <div id="veri" style="display: inline-block;vertical-align: middle"></div>
+        <button id="btn">获取</button>
+        <p id="veriErr"></p>
+        <input type="button" value="登录" id="btnn" style="margin-top:25px;width:100px;display:block">
+    </div>
+</div>
+</body>
+<script src="jquery-1.8.3.min.js"></script>
+<script>
+    //获取验证码
+    $(function(){
+        $("#btn").click(function(){
+            $.ajax({
+                url:"http://127.0.0.1:3000/Handler/AdminLoginRegHandler?actions=veri",
+                type:"get",
+                async:false,
+                data:{
+
+                }
+            }).done(function(result){
+               var list=JSON.parse(result);
+                $("#veri").html(list.data);
+            });
+        });
+    });
+    //校验验证码成功后再验证用户名和密码
+    $(function(){
+        $("#btnn").click(function(){
+            var veri=$("#veriN").val();
+            $.ajax({
+                url:"http://127.0.0.1:3000/Handler/AdminLoginRegHandler?actions=checkveri&veri="+veri,
+                type:"get",
+                async:false,
+                data:{
+                        
+                }
+            }).done(function(result){
+                if(JSON.parse(result).success=="checkSuccess"){
+                    var username=$("#USER").val();
+                    var password=$("#PASS").val();
+                    $.ajax({
+                        url:"http://127.0.0.1:3000/Handler/AdminLoginRegHandler?actions=login",
+                        type:"post",
+                        async:false,
+                        data:{
+                            "userName":username,
+                            "password":password
+                        }
+                    }).done(function(result){
+                        var data=JSON.parse(result);
+                        console.log(data);
+                        if(data.err=="noUser"){
+                            $("#userErr").html("用户名错误，请重新输入");
+                        }else{
+                            $("#userErr").html(" ");
+                        }
+                        if(data.password=="passErr"){
+                            $("#passErr").html("密码错误，请重新输入");
+                        }else{
+                            $("#passErr").html(" ");
+                        }
+                        setTimeout(function(){
+                            if(data.success=="loginSuccess"){
+                                alert("登录成功");
+                                window.open("returninfo.html","_self");
+                            }
+                        },500);
+                    });
+                    $("#veriErr").html(" ");
+                }else{
+                    $("#veriErr").html("验证码有误，请重新输入");
+                }
+
+            })
+        })
+    })
+</script>
+</html>

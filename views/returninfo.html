@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="quit">退出</button>
+<p id="userName"></p>
+<form action="http://127.0.0.1:3000/Handler/AdminLoginRegHandler?actions=updatePass" method="post">
+    旧密码：<input type="text" name="oldPass" id="oldPass"/><br/>
+    新密码：<input type="text" name="newPass" id="newPass"><br/>
+    确认新密码：<input type="text" name="surePass" id="surePass"><br/>
+    <p id="passC" style="color:red;width:200px;height:20px;"></p>
+    <input type="submit" value="确定修改" disabled="disabled" id="sureRe">
+</form>
+</body>
+<script src="jquery-1.8.3.min.js"></script>
+<script>
+    (function(){
+        $.ajax({
+            url:"http://127.0.0.1:3000/Handler/AdminLoginRegHandler?actions=returninfo",
+            type:"post",
+            async:"false",
+            data:{
+
+            }
+        }).done(function(result){
+            if(JSON.parse(result).success){
+                $("#userName").html(JSON.parse(result).success)
+            }
+        })
+    })();
+    $("#quit").click(function(){
+        $.ajax({
+            url:"http://127.0.0.1:3000/Handler/AdminHandler?actions=quit",
+            type:"get",
+            async:"false",
+            data:{
+
+            }
+        }).done(function(result){
+            if(JSON.parse(result).success){
+                window.open("getveri.html","_self");
+            }
+        })
+    });
+    $("#surePass").bind('input propertychan-ge',function(){
+        var e=$("#surePass").val();
+        if(e.length==6){
+            if($("#surePass").val()==$("#newPass").val()){
+                $("#sureRe").removeAttr("disabled");
+                $("#passC").html("密码输入正确，请确认修改");
+            }else{
+                $("#sureRe").attr("disabled","disabled");
+                $("#passC").html("两次密码不正确");
+            }
+        }else{
+            $("#sureRe").attr("disabled","disabled");
+        }
+    })
+</script>
+</html>

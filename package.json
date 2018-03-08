@@ -1,0 +1,16 @@
+{
+  "name": "cmd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/www",
+    "zs": "在packjson里面的script字段中写入一个 start 启动时就写成 npm start 否则换成其他字段必须用npm run字段启动  在相应的字段后面写上 node ./bin/www"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "silly-datetime": "^0.1.2"
+  }
+}
